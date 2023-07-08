@@ -8,6 +8,8 @@ const http = require("http").createServer(app);
 const cors = require("cors");
 const path = require("path");
 
+var users = require("./routes/users");
+
 var mongoDB = process.env.MONGODB_URI || DB_URL;
 mongoose.connect(mongoDB, {
   useNewUrlParser: true,
@@ -34,6 +36,8 @@ app.get("/", (req, res) => {
     }
   });
 });
+
+app.use(API_V1 + "users", users);
 
 http.listen(PORT, () => {
   console.log("Server is up and running on port number " + PORT);
