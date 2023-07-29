@@ -11,8 +11,12 @@ var UserSchema = new Schema({
     type: String,
     default: "",
   },
-  date_of_birth:{
+  date_of_birth: {
     type: Date,
+    default: "",
+  },
+  blood_group: {
+    type: String,
     default: "",
   },
   user_role: {
@@ -24,6 +28,10 @@ var UserSchema = new Schema({
     default: "",
   },
   mobile_number: {
+    type: String,
+    default: "",
+  },
+  password: {
     type: String,
     default: "",
   },
@@ -44,6 +52,10 @@ var UserSchema = new Schema({
   },
   updated_on: {
     type: Number,
+  },
+  is_approved: {
+    type: Boolean,
+    default: false,
   },
 });
 module.exports = mongoose.model("User", UserSchema);
