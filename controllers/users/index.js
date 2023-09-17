@@ -63,4 +63,24 @@ module.exports = {
     let response = await userModel.approving_users(req.body);
     return helper.showResponse(res, 200, response);
   },
+  approving_user: async function (req, res) {
+    let { mobile_number } = req.body;
+    let response = {};
+    if (!mobile_number) {
+      response = helper.showAck(false, messages.MOBILE_NUMBER_ERROR);
+      return helper.showResponse(res, 200, response);
+    }
+    response = await userModel.approving_user(req.body);
+    return helper.showResponse(res, 200, response);
+  },
+  approved_user: async function (req, res) {
+    let { mobile_number } = req.body;
+    let response = {};
+    if (!mobile_number) {
+      response = helper.showAck(false, messages.MOBILE_NUMBER_ERROR);
+      return helper.showResponse(res, 200, response);
+    }
+    response = await userModel.approved_user(req.body);
+    return helper.showResponse(res, 200, response);
+  },
 };

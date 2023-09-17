@@ -14,6 +14,16 @@ const user_fields = {
   address: 1,
   city: 1,
   pin_code: 1,
+  alter_mobile_number: 1,
+  alter_relation_name: 1,
+  is_blood_pressure: 1,
+  is_blood_sugar: 1,
+  other_medical_issue: 1,
+  vehicle_model: 1,
+  vehicle_registration_number: 1,
+  driving_license_number: 1,
+  driving_license_number_valid_date: 1,
+  driving_experience: 1,
   is_approved: 1,
 };
 
@@ -30,6 +40,16 @@ module.exports = {
       pin_code,
       password,
       blood_group,
+      alter_mobile_number,
+      alter_relation_name,
+      is_blood_pressure,
+      is_blood_sugar,
+      other_medical_issue,
+      vehicle_model,
+      vehicle_registration_number,
+      driving_license_number,
+      driving_license_number_valid_date,
+      driving_experience,
     } = data;
 
     let user_data = {
@@ -44,15 +64,28 @@ module.exports = {
       pin_code,
       password,
       blood_group,
+      alter_mobile_number,
+      alter_relation_name,
+      is_blood_pressure,
+      is_blood_sugar,
+      other_medical_issue,
+      vehicle_model,
+      vehicle_registration_number,
+      driving_license_number,
+      driving_license_number_valid_date,
+      driving_experience,
       created_on: moment().unix(),
       updated_on: moment().unix(),
     };
+
     let user = await User.findOne({ mobile_number: mobile_number });
     if (user) {
       return helper.showAck(false, messages.USER_ALREADY);
     }
+
     let new_user = new User(user_data);
     await new_user.save();
+
     return helper.showAck(true, messages.USER_CREATE_SUCCESS);
   },
   login: async function (data) {
@@ -100,9 +133,7 @@ module.exports = {
     return helper.showAck(false, messages.USER_ERROR);
   },
   approved_users: async function (data) {
-    let { page_number, page_size } = data;
-
-    let page_offset = (page_number - 1) * page_size;
+    let { curOffset, perPage } = data;
 
     let filter = {
       user_role: "user",
@@ -113,17 +144,15 @@ module.exports = {
       .match(filter)
       .project(user_fields)
       .sort({ created_on: -1 })
-      .skip(page_offset)
-      .limit(page_size);
+      .skip(curOffset)
+      .limit(perPage);
 
     let response = helper.showAck(true, messages.USER_SUCCESS);
     response.data = users;
     return response;
   },
   approving_users: async function (data) {
-    let { page_number, page_size } = data;
-
-    let page_offset = (page_number - 1) * page_size;
+    let { curOffset, perPage } = data;
 
     let filter = {
       user_role: "user",
@@ -134,11 +163,49 @@ module.exports = {
       .match(filter)
       .project(user_fields)
       .sort({ created_on: -1 })
-      .skip(page_offset)
-      .limit(page_size);
+      .skip(curOffset)
+      .limit(perPage);
 
     let response = helper.showAck(true, messages.USER_SUCCESS);
     response.data = users;
     return response;
+  },
+  approving_user: async function (data) {
+    let { mobile_number } = data;
+
+    let user_data = {
+      mobile_number,
+      is_approved: false,
+    };
+    let user = await User.findOne(user_data, user_fields);
+    if (user) {
+      if (!user.is_approved) {
+        let response = helper.showAck(true, messages.USER_SUCCESS);
+        response.data = user;
+        return response;
+      } else {
+        return helper.showAck(false, messages.USER_APPROVED);
+      }
+    }
+    return helper.showAck(false, messages.USER_ERROR);
+  },
+  approved_user: async function (data) {
+    let { mobile_number } = data;
+
+    let user_data = {
+      mobile_number,
+      is_approved: true,
+    };
+    let user = await User.findOne(user_data, user_fields);
+    if (user) {
+      if (user.is_approved) {
+        let response = helper.showAck(true, messages.USER_SUCCESS);
+        response.data = user;
+        return response;
+      } else {
+        return helper.showAck(false, messages.USER_APPROVAL_PENDING);
+      }
+    }
+    return helper.showAck(false, messages.USER_ERROR);
   },
 };

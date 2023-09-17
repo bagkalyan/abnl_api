@@ -9,5 +9,7 @@ router.post("/login", user_controller.login);
 router.post("/approve_user", user_controller.approve_user);
 router.post("/approved_users", user_controller.approved_users);
 router.post("/approving_users", user_controller.approving_users);
+router.post("/approving_user", user_controller.approving_user);
+router.post("/approved_user", user_controller.approved_user);
 
 module.exports = router;
